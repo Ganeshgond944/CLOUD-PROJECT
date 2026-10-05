@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cloud File Storage</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                linear-gradient(135deg,
+                    #eef2ff,
+                    #f8fafc);
+
+            color: #1e293b;
+
+            min-height: 100vh;
+
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+
+            background:
+                linear-gradient(135deg,
+                    #111827,
+                    #1e3a8a);
+
+            color: white;
+
+            padding: 30px 20px;
+
+            text-align: center;
+
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.15);
+
+        }
+
+        header h1 {
+
+            font-size: 36px;
+
+            margin-bottom: 8px;
+
+        }
+
+        header p {
+
+            font-size: 17px;
+
+            opacity: 0.9;
+
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .container {
+
+            width: 90%;
+
+            max-width: 1000px;
+
+            margin: 40px auto;
+
+        }
+
+        /* =========================
+           CARD
+        ========================= */
+
+        .card {
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 18px;
+
+            margin-bottom: 30px;
+
+            box-shadow:
+                0 8px 30px rgba(15, 23, 42, 0.08);
+
+        }
+
+        .card h2 {
+
+            margin-bottom: 20px;
+
+            font-size: 25px;
+
+        }
+
+        /* =========================
+           UPLOAD AREA
+        ========================= */
+
+        .upload-box {
+
+            border:
+                2px dashed #6366f1;
+
+            border-radius: 15px;
+
+            padding: 45px 20px;
+
+            text-align: center;
+
+            background:
+                #f8faff;
+
+        }
+
+        .upload-icon {
+
+            font-size: 55px;
+
+            margin-bottom: 15px;
+
+        }
+
+        input[type="file"] {
+
+            display: block;
+
+            margin:
+                20px auto;
+
+            max-width: 100%;
+
+        }
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        button {
+
+            border: none;
+
+            border-radius: 9px;
+
+            padding:
+                12px 22px;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition:
+                0.2s;
+
+        }
+
+        .upload-btn {
+
+            background:
+                #4f46e5;
+
+            color: white;
+
+        }
+
+        .upload-btn:hover {
+
+            background:
+                #4338ca;
+
+            transform:
+                translateY(-1px);
+
+        }
+
+        .view-btn {
+
+            background:
+                #059669;
+
+            color: white;
+
+            text-decoration: none;
+
+            display: inline-block;
+
+            padding:
+                9px 16px;
+
+            border-radius: 7px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+        }
+
+        .view-btn:hover {
+
+            background:
+                #047857;
+
+        }
+
+        .delete-btn {
+
+            background:
+                #dc2626;
+
+            color: white;
+
+        }
+
+        .delete-btn:hover {
+
+            background:
+                #b91c1c;
+
+        }
+
+        /* =========================
+           MESSAGE
+        ========================= */
+
+        #message {
+
+            margin-top: 20px;
+
+            font-weight: bold;
+
+            font-size: 16px;
+
+        }
+
+        .success {
+
+            color: #059669;
+
+        }
+
+        .error {
+
+            color: #dc2626;
+
+        }
+
+        /* =========================
+           FILE LIST
+        ========================= */
+
+        .file-list {
+
+            width: 100%;
+
+        }
+
+        .file-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            padding:
+                18px 0;
+
+            border-bottom:
+                1px solid #e2e8f0;
+
+        }
+
+        .file-item:last-child {
+
+            border-bottom: none;
+
+        }
+
+        .file-icon {
+
+            width: 50px;
+
+            height: 50px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                #eef2ff;
+
+            border-radius: 10px;
+
+            font-size: 25px;
+
+        }
+
+        .file-info {
+
+            flex: 1;
+
+            min-width: 0;
+
+        }
+
+        .file-name {
+
+            font-weight: bold;
+
+            font-size: 16px;
+
+            word-break: break-word;
+
+        }
+
+        .file-details {
+
+            color: #64748b;
+
+            font-size: 13px;
+
+            margin-top: 5px;
+
+        }
+
+        .file-actions {
+
+            display: flex;
+
+            gap: 8px;
+
+            flex-shrink: 0;
+
+        }
+
+        .empty {
+
+            text-align: center;
+
+            color: #64748b;
+
+            padding: 40px 20px;
+
+        }
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .loading {
+
+            text-align: center;
+
+            padding: 30px;
+
+            color: #64748b;
+
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            header h1 {
+
+                font-size: 28px;
+
+            }
+
+            .container {
+
+                width: 95%;
+
+            }
+
+            .card {
+
+                padding: 20px;
+
+            }
+
+            .file-item {
+
+                align-items: flex-start;
+
+            }
+
+            .file-actions {
+
+                flex-direction: column;
+
+            }
+
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+     HEADER
+========================= -->
+
+    <header>
+
+        <h1>
+            ☁️ Cloud File Storage
+        </h1>
+
+        <p>
+            Upload and manage your files in the cloud
+        </p>
+
+    </header>
+
+
+    <!-- =========================
+     MAIN CONTAINER
+========================= -->
+
+    <div class="container">
+
+
+        <!-- =========================
+         UPLOAD CARD
+    ========================= -->
+
+        <div class="card">
+
+            <h2>
+                📤 Upload File
+            </h2>
+
+            <div class="upload-box">
+
+                <div class="upload-icon">
+                    ☁️
+                </div>
+
+                <p>
+                    Select a file to upload
+                </p>
+
+                <p style="
+                    color:#64748b;
+                    margin-top:5px;
+                    font-size:14px;
+                ">
+                    Maximum file size: 50 MB
+                </p>
+
+
+                <form id="uploadForm">
+
+                    <input type="file" id="fileInput" name="file" required>
+
+                    <button type="submit" class="upload-btn" id="uploadButton">
+                        ☁️ Upload File
+                    </button>
+
+                </form>
+
+
+                <div id="message"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+         FILE LIST CARD
+    ========================= -->
+
+        <div class="card">
+
+            <h2>
+                📁 Uploaded Files
+            </h2>
+
+            <div id="fileList" class="file-list">
+
+                <div class="loading">
+                    Loading files...
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <script>
+
+
+        // ======================================
+        // GET HTML ELEMENTS
+        // ======================================
+
+        const uploadForm =
+            document.getElementById(
+                "uploadForm"
+            );
+
+        const fileInput =
+            document.getElementById(
+                "fileInput"
+            );
+
+        const uploadButton =
+            document.getElementById(
+                "uploadButton"
+            );
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+        const fileList =
+            document.getElementById(
+                "fileList"
+            );
+
+
+        // ======================================
+        // UPLOAD FILE
+        // ======================================
+
+        uploadForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const file =
+                    fileInput.files[0];
+
+
+                if (!file) {
+
+                    showMessage(
+                        "Please select a file.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                // Check file size
+
+                const maxSize =
+                    50 * 1024 * 1024;
+
+
+                if (file.size > maxSize) {
+
+                    showMessage(
+                        "File is too large. Maximum size is 50 MB.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                // Create form data
+
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "file",
+                    file
+                );
+
+
+                // Disable button
+
+                uploadButton.disabled = true;
+
+                uploadButton.textContent =
+                    "Uploading...";
+
+
+                showMessage(
+                    "Uploading file...",
+                    ""
+                );
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/upload",
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (result.success) {
+
+                        showMessage(
+                            "✅ File uploaded successfully!",
+                            "success"
+                        );
+
+
+                        // Clear selected file
+
+                        fileInput.value = "";
+
+
+                        // Refresh file list
+
+                        await loadFiles();
+
+                    }
+
+                    else {
+
+                        showMessage(
+                            "❌ " +
+                            (result.message ||
+                                "Upload failed."),
+                            "error"
+                        );
+
+                    }
+
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Upload error:",
+                        error
+                    );
+
+
+                    showMessage(
+                        "❌ Could not connect to server.",
+                        "error"
+                    );
+
+                }
+
+
+                // Enable button
+
+                uploadButton.disabled = false;
+
+                uploadButton.textContent =
+                    "☁️ Upload File";
+
+            }
+        );
+
+
+        // ======================================
+        // LOAD FILES
+        // ======================================
+
+        async function loadFiles() {
+
+            fileList.innerHTML = `
+        <div class="loading">
+            Loading files...
+        </div>
+    `;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/files"
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                if (!result.success) {
+
+                    fileList.innerHTML = `
+                <div class="empty">
+                    ❌ ${escapeHtml(
+                        result.message ||
+                        "Could not load files."
+                    )}
+                </div>
+            `;
+
+                    return;
+
+                }
+
+
+                // No files
+
+                if (
+                    !result.files ||
+                    result.files.length === 0
+                ) {
+
+                    fileList.innerHTML = `
+                <div class="empty">
+                    📂 No files uploaded yet.
+                </div>
+            `;
+
+                    return;
+
+                }
+
+
+                fileList.innerHTML = "";
+
+
+                // Display files
+
+                result.files.forEach(
+                    function (file) {
+
+
+                        const fileSize =
+                            formatFileSize(
+                                file.size
+                            );
+
+
+                        const fileDate =
+                            file.createdAt
+                                ? new Date(
+                                    file.createdAt
+                                ).toLocaleString()
+                                : "Unknown";
+
+
+                        const item =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        item.className =
+                            "file-item";
+
+
+                        item.innerHTML = `
+
+                    <div class="file-icon">
+                        📄
+                    </div>
+
+
+                    <div class="file-info">
+
+                        <div class="file-name">
+                            ${escapeHtml(
+                            file.name
+                        )}
+                        </div>
+
+                        <div class="file-details">
+
+                            ${fileSize}
+                            &nbsp; • &nbsp;
+                            ${escapeHtml(
+                            file.type || "File"
+                        )}
+                            &nbsp; • &nbsp;
+                            ${fileDate}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="file-actions">
+
+                        <a
+                            href="${escapeAttribute(
+                            file.url
+                        )}"
+                            target="_blank"
+                            class="view-btn"
+                        >
+                            👁 View
+                        </a>
+
+
+                        <button
+                            class="delete-btn"
+                            type="button"
+                        >
+                            🗑 Delete
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                        // Get delete button
+
+                        const deleteButton =
+                            item.querySelector(
+                                ".delete-btn"
+                            );
+
+
+                        // Add delete event
+
+                        deleteButton.addEventListener(
+                            "click",
+                            function () {
+
+                                deleteFile(
+                                    file.name
+                                );
+
+                            }
+                        );
+
+
+                        fileList.appendChild(
+                            item
+                        );
+
+                    }
+                );
+
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Load files error:",
+                    error
+                );
+
+
+                fileList.innerHTML = `
+            <div class="empty">
+                ❌ Could not connect to server.
+            </div>
+        `;
+
+            }
+
+        }
+
+
+        // ======================================
+        // DELETE FILE
+        // ======================================
+
+        async function deleteFile(
+            fileName
+        ) {
+
+
+            const confirmed =
+                confirm(
+                    `Are you sure you want to delete "${fileName}"?`
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            try {
+
+
+                // Disable all delete buttons
+
+                const deleteButtons =
+                    document.querySelectorAll(
+                        ".delete-btn"
+                    );
+
+
+                deleteButtons.forEach(
+                    function (button) {
+
+                        button.disabled = true;
+
+                    }
+                );
+
+
+                const response =
+                    await fetch(
+                        "/api/files?fileName=" +
+                        encodeURIComponent(
+                            fileName
+                        ),
+                        {
+                            method: "DELETE"
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                if (result.success) {
+
+                    showMessage(
+                        "✅ File deleted successfully!",
+                        "success"
+                    );
+
+
+                    // Refresh list
+
+                    await loadFiles();
+
+                }
+
+                else {
+
+                    showMessage(
+                        "❌ " +
+                        (
+                            result.message ||
+                            "Delete failed."
+                        ),
+                        "error"
+                    );
+
+                }
+
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Delete error:",
+                    error
+                );
+
+
+                showMessage(
+                    "❌ Delete failed. Check the server terminal.",
+                    "error"
+                );
+
+            }
+
+        }
+
+
+        // ======================================
+        // SHOW MESSAGE
+        // ======================================
+
+        function showMessage(
+            text,
+            type
+        ) {
+
+            message.textContent =
+                text;
+
+
+            message.className =
+                type || "";
+
+        }
+
+
+        // ======================================
+        // FORMAT FILE SIZE
+        // ======================================
+
+        function formatFileSize(
+            bytes
+        ) {
+
+            if (!bytes) {
+
+                return "0 Bytes";
+
+            }
+
+
+            const units = [
+                "Bytes",
+                "KB",
+                "MB",
+                "GB"
+            ];
+
+
+            const index =
+                Math.floor(
+                    Math.log(bytes) /
+                    Math.log(1024)
+                );
+
+
+            return (
+                parseFloat(
+                    (
+                        bytes /
+                        Math.pow(
+                            1024,
+                            index
+                        )
+                    ).toFixed(2)
+                )
+                + " " +
+                units[index]
+            );
+
+        }
+
+
+        // ======================================
+        // ESCAPE HTML
+        // ======================================
+
+        function escapeHtml(
+            text
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.textContent =
+                text ?? "";
+
+            return div.innerHTML;
+
+        }
+
+
+        // ======================================
+        // ESCAPE ATTRIBUTE
+        // ======================================
+
+        function escapeAttribute(
+            text
+        ) {
+
+            return String(
+                text ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                );
+
+        }
+
+
+        // ======================================
+        // LOAD FILES ON PAGE LOAD
+        // ======================================
+
+        loadFiles();
+
+
+    </script>
+
+
+</body>
+
+</html>
